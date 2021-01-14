@@ -29,9 +29,9 @@ class Login extends React.Component {
     return(
       <form className="container"  onSubmit={this.handleSubmit}>
         <div className="form-group col-lg-5 col-centered"> 
-          Login: {this.state.login}
+          Login:
           <input type="text" className="form-control" value={this.state.value} onChange={this.handleChangeLogin} />
-          Password: {this.state.password}
+          Password:
           <input type="password" className="form-control" value={this.state.value} onChange={this.handleChangePassword} />
           <br />
           <input type="submit" className="btn btn-primary" value="Login" />

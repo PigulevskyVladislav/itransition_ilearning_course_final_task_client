@@ -1,6 +1,7 @@
 import React from "react";
 import Login from "./component/Login";
 import Header from "./component/Header";
+import Register from "./component/Register";
 
 class App extends React.Component {
   constructor(props) {
@@ -32,8 +33,10 @@ class App extends React.Component {
         <Header isAuthenticated={this.state.isAuthenticated}
                 login={this.state.user.login} />
 
-        <Login updateUser={this.handleUpdateUser}
-               authenticate={this.handleAuthenticate} />
+        <Register />
+
+        {/*<Login updateUser={this.handleUpdateUser}
+               authenticate={this.handleAuthenticate} />*/}
       </div>
     );
   }
