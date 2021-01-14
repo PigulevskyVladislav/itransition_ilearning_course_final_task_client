@@ -20,7 +20,8 @@ class Login extends React.Component {
   }
 
   handleSubmit = (event) => {
-    alert(this.state.login);
+    this.props.updateUser(this.state.login, this.state.password);
+    this.props.authenticate(true);
     event.preventDefault();
   }
 
