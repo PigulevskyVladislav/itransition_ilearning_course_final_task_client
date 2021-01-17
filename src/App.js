@@ -1,4 +1,10 @@
 import React from "react";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
 import Login from "./component/Login";
 import Header from "./component/Header";
 import Register from "./component/Register";
@@ -29,15 +35,22 @@ class App extends React.Component {
 
   render() {
     return (
-      <div>
-        <Header isAuthenticated={this.state.isAuthenticated}
-                login={this.state.user.login} />
+      <Router>
+        <div>
+          <Header isAuthenticated={this.state.isAuthenticated}
+                  login={this.state.user.login} />
 
-        <Register />
-
-        {/*<Login updateUser={this.handleUpdateUser}
-               authenticate={this.handleAuthenticate} />*/}
-      </div>
+          <Switch>
+            <Route path="/login">
+              <Login updateUser={this.handleUpdateUser}
+                     authenticate={this.handleAuthenticate} />
+            </Route>
+            <Route path="/register">
+              <Register />
+            </Route>
+          </Switch>
+        </div>
+      </Router>
     );
   }
 }

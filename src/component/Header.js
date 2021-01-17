@@ -1,4 +1,5 @@
 import React from "react";
+import { BrowserRouter as Router, Link} from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 class Header extends React.Component {
@@ -17,18 +18,15 @@ class Header extends React.Component {
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
         <a className="navbar-brand" href="#">Final Task</a>
         <div className="collapse navbar-collapse w-100 order-1" id="navbarSupportedContent">
-          <ul className="navbar-nav mr-auto">
-            <li className="nav-item">
-              <a className="nav-link" href="#">Link</a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link" href="#">Link</a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link" href="#">Link</a>
-            </li>
-          </ul>
-        </div>
+            <ul className="navbar-nav mr-auto">
+              <li className="nav-item">
+                <Link className="nav-link" to="/login">Login</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/register">Register</Link>
+              </li>
+            </ul>
+          </div>
         <div className="collapse navbar-collapse order-2" id="navbarSupportedContent">
           <ul className="navbar-nav mr-auto">
             {this.handleShowLogin()}
