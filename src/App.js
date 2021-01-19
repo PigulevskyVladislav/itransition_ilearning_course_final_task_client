@@ -2,9 +2,9 @@ import React from "react";
 import {
   BrowserRouter as Router,
   Switch,
-  Route,
-  Link
+  Route
 } from "react-router-dom";
+import Home from "./component/home/Home";
 import Login from "./component/Login";
 import Header from "./component/Header";
 import Register from "./component/Register";
@@ -41,6 +41,9 @@ class App extends React.Component {
                   login={this.state.user.login} />
 
           <Switch>
+            <Route path="/home">
+              <Home />
+            </Route>
             <Route path="/login">
               <Login updateUser={this.handleUpdateUser}
                      authenticate={this.handleAuthenticate} />

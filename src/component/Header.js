@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 class Header extends React.Component {
@@ -19,6 +19,9 @@ class Header extends React.Component {
         <a className="navbar-brand" href="#">Final Task</a>
         <div className="collapse navbar-collapse w-100 order-1" id="navbarSupportedContent">
             <ul className="navbar-nav mr-auto">
+              <li className="nav-item">
+                <Link className="nav-link" to="/home">Home</Link>
+              </li>
               <li className="nav-item">
                 <Link className="nav-link" to="/login">Login</Link>
               </li>
