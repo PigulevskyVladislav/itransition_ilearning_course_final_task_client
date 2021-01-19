@@ -1,33 +1,25 @@
 import React from "react";
 
-class Items extends React.Component {
+class Users extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      items: [],
+      users: [],
       isLoaded: false,
     };
   }
 
   componentDidMount() {
-    this.getItems();
+    this.getUsers();
   }
 
-  componentDidUpdate(prevProps) {
-    if (this.props.location !== prevProps.location) {
-      window.location.reload();
-    }
-  }
-
-  getItems = () => {
-    let tagId = this.props.match.params.tag_id || '';
-    let source = "https://localhost:44352/items/".concat(tagId);
-    fetch(source)
+  getUsers = () => {
+    fetch("https://localhost:44352/users")
       .then(res => res.json())
       .then(
         (result) => {
           this.setState({
-            items: Array.from(result),
+            users: Array.from(result),
             isLoaded: true,
           });
         },
@@ -39,10 +31,12 @@ class Items extends React.Component {
   }
 
   renderItems = () => {
-    let items = this.state.items;
+    let items = this.state.users;
     let itemRows = items.map((item) => 
     <tr key={item.id}>
-      <td>{item.name}</td>
+      <td>{item.login}</td>
+      <td>{item.email}</td>
+      <td><input className="form-check-input" type="checkbox" checked={item.isAdmin}/></td>
     </tr>
     );
     return itemRows;
@@ -58,7 +52,9 @@ class Items extends React.Component {
       <table className="table">
         <thead>
           <tr>
-            <th>Name</th>
+            <th>Login</th>
+            <th>Email</th>
+            <th>Is admin</th>
           </tr>
         </thead>
         <tbody>
@@ -69,4 +65,4 @@ class Items extends React.Component {
   }
 }
 
-export default Items;
+export default Users;
