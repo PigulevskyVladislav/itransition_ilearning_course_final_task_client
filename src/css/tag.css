@@ -1,0 +1,9 @@
+.badge {
+  color: white;
+  cursor: pointer;
+  margin: 1vh;
+}
+
+.badge:hover {
+  color: rgb(255, 255, 255);
+}

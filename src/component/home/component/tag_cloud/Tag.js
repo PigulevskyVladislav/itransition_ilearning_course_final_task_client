@@ -1,5 +1,7 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import '../../../../css/tag.css';
 
 class Tag extends React.Component {
   constructor(props) {
@@ -13,9 +15,9 @@ class Tag extends React.Component {
 
   render() {
     return(
-      <span className="badge rounded-pill bg-primary" onClick={this.handleTagClick}>{this.props.name}</span>
+      <Link to={"/items/"+this.props.id} className="badge rounded-pill bg-primary">{this.props.name}</Link>
     );
-  }
+  } 
 }
 
 export default Tag;

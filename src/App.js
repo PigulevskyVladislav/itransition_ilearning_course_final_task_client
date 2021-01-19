@@ -5,6 +5,7 @@ import {
   Route
 } from "react-router-dom";
 import Home from "./component/home/Home";
+import Items from "./component/Items"
 import Login from "./component/Login";
 import Header from "./component/Header";
 import Register from "./component/Register";
@@ -41,9 +42,10 @@ class App extends React.Component {
                   login={this.state.user.login} />
 
           <Switch>
-            <Route path="/home">
-              <Home />
-            </Route>
+            <Route path="/home" component={Home} />
+            <Route path="/items/:tag_id" component={Items} />
+            <Route path="/items" component={Items} />
+            
             <Route path="/login">
               <Login updateUser={this.handleUpdateUser}
                      authenticate={this.handleAuthenticate} />

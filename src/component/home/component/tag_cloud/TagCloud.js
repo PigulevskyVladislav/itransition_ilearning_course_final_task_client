@@ -1,7 +1,6 @@
 import React from "react";
 import Tag from "./Tag";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './tagCloud.css';
 
 class TagCloud extends React.Component {
   constructor(props) {
