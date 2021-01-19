@@ -10,6 +10,7 @@ import Users from "./component/Users"
 import Login from "./component/Login";
 import Header from "./component/Header";
 import Register from "./component/Register";
+import Collections from "./component/Collections";
 
 class App extends React.Component {
   constructor(props) {
@@ -44,8 +45,9 @@ class App extends React.Component {
 
           <Switch>
             <Route path="/home" component={Home} />
-            <Route path="/items/:tag_id" component={Items} />
+            <Route path="/items/bytag/:tag_id" component={Items} />
             <Route path="/items" component={Items} />
+            <Route path="/collections" component={Collections} />
             <Route path="/login">
               <Login updateUser={this.handleUpdateUser}
                      authenticate={this.handleAuthenticate} />

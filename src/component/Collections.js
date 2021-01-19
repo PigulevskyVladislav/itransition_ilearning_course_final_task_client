@@ -1,36 +1,25 @@
 import React from "react";
 
-class Items extends React.Component {
+class Collections extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      items: [],
+      collections: [],
       isLoaded: false,
     };
   }
 
   componentDidMount() {
-    this.getItems();
+    this.getCollections();
   }
 
-  componentDidUpdate(prevProps) {
-    if (this.props.location !== prevProps.location) {
-      window.location.reload();
-    }
-  }
-
-  getItems = () => {
-    let tagId = this.props.match.params.tag_id;
-    let source = "https://localhost:44352/items";
-    if (tagId) {
-      source += "/bytag/".concat(tagId);
-    }
-    fetch(source)
+  getCollections = () => {
+    fetch("https://localhost:44352/collections")
       .then(res => res.json())
       .then(
         (result) => {
           this.setState({
-            items: Array.from(result),
+            collections: Array.from(result),
             isLoaded: true,
           });
         },
@@ -42,10 +31,11 @@ class Items extends React.Component {
   }
 
   renderItems = () => {
-    let items = this.state.items;
+    let items = this.state.collections;
     let itemRows = items.map((item) => 
     <tr key={item.id}>
       <td>{item.name}</td>
+      <td>{item.description}</td>
     </tr>
     );
     return itemRows;
@@ -62,6 +52,7 @@ class Items extends React.Component {
         <thead>
           <tr>
             <th>Name</th>
+            <th>Description</th>
           </tr>
         </thead>
         <tbody>
@@ -72,4 +63,4 @@ class Items extends React.Component {
   }
 }
 
-export default Items;
+export default Collections;

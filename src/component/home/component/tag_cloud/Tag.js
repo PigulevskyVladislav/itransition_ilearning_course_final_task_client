@@ -15,7 +15,7 @@ class Tag extends React.Component {
 
   render() {
     return(
-      <Link to={"/items/"+this.props.id} className="badge rounded-pill bg-primary">{this.props.name}</Link>
+      <Link to={"/items/bytag/"+this.props.id} className="badge rounded-pill bg-primary">{this.props.name}</Link>
     );
   } 
 }
