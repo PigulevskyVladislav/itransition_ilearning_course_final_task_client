@@ -1,4 +1,6 @@
 import React from "react";
+import { Link } from "react-router-dom";
+import { fetchData, getAddress } from "../../utils"
 
 class Collections extends React.Component {
   constructor(props) {
@@ -10,31 +12,28 @@ class Collections extends React.Component {
   }
 
   componentDidMount() {
-    this.getCollections();
+    fetchData(getAddress().concat("/collections"), this.getCollections);
   }
 
-  getCollections = () => {
-    fetch("https://localhost:44352/collections")
-      .then(res => res.json())
-      .then(
-        (result) => {
-          this.setState({
-            collections: Array.from(result),
-            isLoaded: true,
-          });
-        },
-        (error) => {
-          alert("error!");
-          // TODO Errors
-        }
-    );
+  getCollections = (response) => {
+    let result = response.result;
+    if (result) {
+      this.setState({
+        collections: Array.from(result),
+        isLoaded: true,
+      });
+    } else {
+      this.setState({
+        error: { message: "Collection loading error" },
+      });
+    }
   }
 
   renderItems = () => {
     let items = this.state.collections;
     let itemRows = items.map((item) => 
     <tr key={item.id}>
-      <td>{item.name}</td>
+      <td><Link className="nav-link" to={"/collections/".concat(item.id)}>{item.name}</Link></td>
       <td>{item.description}</td>
     </tr>
     );

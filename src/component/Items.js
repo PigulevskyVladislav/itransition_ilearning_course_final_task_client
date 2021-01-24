@@ -1,4 +1,5 @@
 import React from "react";
+import { fetchData, getAddress } from "../../utils"
 
 class Items extends React.Component {
   constructor(props) {
@@ -6,69 +7,45 @@ class Items extends React.Component {
     this.state = {
       items: [],
       isLoaded: false,
+      error: null,
     };
   }
 
   componentDidMount() {
-    this.getItems();
+    fetchData(getAddress().concat("/items"), this.getItems);
   }
 
-  componentDidUpdate(prevProps) {
-    if (this.props.location !== prevProps.location) {
-      window.location.reload();
+  getItems = (response) => {
+    let result = response.result;
+    if (result) {
+      this.setState({
+        isLoaded: true,
+        items: result,
+      });
+    } else {
+      this.setState({
+        error: { message: "Collection loading error" },
+      });
     }
-  }
-
-  getItems = () => {
-    let tagId = this.props.match.params.tag_id;
-    let source = "https://localhost:44352/items";
-    if (tagId) {
-      source += "/bytag/".concat(tagId);
-    }
-    fetch(source)
-      .then(res => res.json())
-      .then(
-        (result) => {
-          this.setState({
-            items: Array.from(result),
-            isLoaded: true,
-          });
-        },
-        (error) => {
-          alert("error!");
-          // TODO Errors
-        }
-    );
-  }
-
-  renderItems = () => {
-    let items = this.state.items;
-    let itemRows = items.map((item) => 
-    <tr key={item.id}>
-      <td>{item.name}</td>
-    </tr>
-    );
-    return itemRows;
   }
 
   render() {
-    let rows;
-    if (this.state.isLoaded) {
-      rows = this.renderItems();
+    const { error, isLoaded, items } = this.state;
+    if (error) {
+      return <div>Error: {error.message}</div>;
+    } else if (!isLoaded) {
+      return <div>Loading...</div>;
+    } else {
+      return (
+        <ul>
+          {items.map(item => (
+            <li key={item.id}>
+              {item.firstName} {item.lastName}
+            </li>
+          ))}
+        </ul>
+      );
     }
-
-    return(
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Name</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows}
-        </tbody>
-      </table>
-    );
   }
 }
 

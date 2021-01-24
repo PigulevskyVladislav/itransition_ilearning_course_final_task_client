@@ -1,41 +1,50 @@
 import React from "react";
-import { fetchData, getAddress } from "../../../utils"
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { fetchData, getAddress } from "../../utils"
 
-class BiggestCollectionTable extends React.Component {
-  constructor(props){
+class Items extends React.Component {
+  constructor(props) {
     super(props);
     this.state = {
-      collections: [],
+      items: [],
       isLoaded: false,
     };
   }
 
   componentDidMount() {
-    fetchData(getAddress().concat("/collections/biggest"), this.getCollections);
+    let id = this.props.id || this.props.match.params.id;
+    let source = getAddress().concat("/items");
+    if (id) {
+      let selector = this.props.selector || this.props.match.params.selector;
+      source += "/".concat(selector).concat("/").concat(id);
+    }
+    fetchData(source, this.getItems);
   }
 
-  getCollections = (response) => {
+  componentDidUpdate(prevProps) {
+    if (this.props.location !== prevProps.location) {
+      window.location.reload();
+    }
+  }
+
+  getItems = (response) => {
     let result = response.result;
     if (result) {
       this.setState({
-        collections: Array.from(result),
+        items: Array.from(result),
         isLoaded: true,
       });
     } else {
       this.setState({
         error: { message: "Collection loading error" },
       });
-    } 
+    }
   }
 
   renderItems = () => {
-    let items = this.state.collections;
+    let items = this.state.items;
     let itemRows = items.map((item) => 
     <tr key={item.id}>
       <td>{item.name}</td>
-      <td>{item.count}</td>
-      <td>{item.description}</td>
     </tr>
     );
     return itemRows;
@@ -52,8 +61,6 @@ class BiggestCollectionTable extends React.Component {
         <thead>
           <tr>
             <th>Name</th>
-            <th>Item count</th>
-            <th>Description</th>
           </tr>
         </thead>
         <tbody>
@@ -64,4 +71,4 @@ class BiggestCollectionTable extends React.Component {
   }
 }
 
-export default BiggestCollectionTable;
+export default Items;

@@ -1,4 +1,5 @@
 import React from "react";
+import { fetchData, getAddress } from "../utils"
 
 class Users extends React.Component {
   constructor(props) {
@@ -10,24 +11,21 @@ class Users extends React.Component {
   }
 
   componentDidMount() {
-    this.getUsers();
+    fetchData(getAddress().concat("/users"), this.getUsers);
   }
 
-  getUsers = () => {
-    fetch("https://localhost:44352/users")
-      .then(res => res.json())
-      .then(
-        (result) => {
-          this.setState({
-            users: Array.from(result),
-            isLoaded: true,
-          });
-        },
-        (error) => {
-          alert("error!");
-          // TODO Errors
-        }
-    );
+  getUsers = (response) => {
+    let result = response.result;
+    if (result) {
+      this.setState({
+        users: Array.from(result),
+        isLoaded: true,
+      });
+    } else {
+      this.setState({
+        error: { message: "Collection loading error" },
+      });
+    }
   }
 
   renderItems = () => {
@@ -36,7 +34,7 @@ class Users extends React.Component {
     <tr key={item.id}>
       <td>{item.login}</td>
       <td>{item.email}</td>
-      <td><input className="form-check-input" type="checkbox" checked={item.isAdmin}/></td>
+      <td><input className="form-check-input" type="checkbox" checked={item.isAdmin} onChange={e => {}}/></td>
     </tr>
     );
     return itemRows;

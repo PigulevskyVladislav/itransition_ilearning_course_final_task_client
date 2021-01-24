@@ -1,5 +1,6 @@
 import React from "react";
 import Tag from "./Tag";
+import { fetchData, getAddress } from "../../../../utils"
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 class TagCloud extends React.Component {
@@ -12,24 +13,21 @@ class TagCloud extends React.Component {
   }
 
   componentDidMount() {
-    this.getTags();
+    fetchData(getAddress().concat("/tags"), this.getTags);
   }
 
-  getTags = () => {
-    fetch("https://localhost:44352/tags")
-      .then(res => res.json())
-      .then(
-        (result) => {
-          this.setState({
-            tags: Array.from(result),
-            isLoaded: true,
-          });
-        },
-        (error) => {
-          alert("error!");
-          // TODO Errors
-        }
-      );
+  getTags = (response) => {
+    let result = response.result;
+    if (result) {
+      this.setState({
+        tags: Array.from(result),
+        isLoaded: true,
+      });
+    } else {
+      this.setState({
+        error: { message: "Collection loading error" },
+      });
+    }
   }  
 
   renderItems = () => {

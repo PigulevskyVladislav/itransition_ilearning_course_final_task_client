@@ -1,0 +1,17 @@
+.spinner-border{
+  position: absolute;
+    height: 30vh;
+    width: 30vh;
+    top: 50%;
+    left: 50%;
+    margin-left: -50px;
+    margin-top: -50px;
+}
+
+.Header{
+  grid-template-areas: ‘logo nav’;
+}
+
+#root {
+  height: 100vh;
+}

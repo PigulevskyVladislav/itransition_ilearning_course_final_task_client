@@ -1,4 +1,5 @@
 import React from "react";
+import { fetchData, getAddress } from "../../../utils"
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 class LastItemTable extends React.Component {
@@ -7,28 +8,26 @@ class LastItemTable extends React.Component {
     this.state = {
       items: [],
       isLoaded: false,
+      error: null,
     };
   }
 
   componentDidMount() {
-    this.getItems();
+    fetchData(getAddress().concat("/items/lastadded"), this.getItems);
   }
 
-  getItems = () => {
-    fetch("https://localhost:44352/items/lastadded")
-      .then(res => res.json())
-      .then(
-        (result) => {
-          this.setState({
-            items: Array.from(result),
-            isLoaded: true,
-          });
-        },
-        (error) => {
-          alert("error!");
-          // TODO Errors
-        }
-      );   
+  getItems = (response) => {
+    let result = response.result;
+    if (result) {
+      this.setState({
+        items: Array.from(result),
+        isLoaded: true,
+      });
+    } else {
+      this.setState({
+        error: response.error,
+      });
+    }
   }
 
   renderItems = () => {
