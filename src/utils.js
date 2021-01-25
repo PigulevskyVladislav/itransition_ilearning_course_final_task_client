@@ -18,6 +18,14 @@ export function fetchData(source, callback) {
     return response;
 }
 
+export function errorBlock(message) {
+  return(
+    <div class="alert alert-danger" role="alert">
+      {message}
+    </div>
+  );
+}
+
 export function errorPage(error) {
   return <ErrorPage message={error.message}/>
 }

@@ -13,6 +13,12 @@ class Header extends React.Component {
     }
   }
 
+  // handleAuthenticateClick = () => {
+  //   if (this.props.isAuthenticated) {
+  //     this.props.logOut();
+  //   }
+  // }
+
   render() {
     return(
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -43,7 +49,10 @@ class Header extends React.Component {
           <ul className="navbar-nav mr-auto">
             {this.handleShowLogin()}
             <li className="nav-item">
-              <a className="nav-link" href="#">{this.props.isAuthenticated ?'Logout':'Login'}</a>
+              <a className="nav-link" href="/login" 
+                                      onClick={this.props.isAuthenticated ? this.props.logOut : null}>
+                {this.props.isAuthenticated ?'Logout':'Login'}
+              </a>
             </li>
           </ul>
         </div>

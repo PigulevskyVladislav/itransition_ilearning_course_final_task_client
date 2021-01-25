@@ -24,18 +24,21 @@ class App extends React.Component {
     }
   }
 
-  handleUpdateUser = (login, password) => {
+  handleUpdateUser = (login, password, token) => {
     let user = this.state.user;
     user.login = login;
     user.password = password;
+    user.token = token;
     this.setState({
       user: user,
+      isAuthenticated: true,
     });
   }
 
-  handleAuthenticate = (isLogin) => {
+  handleLogOut = () => {
     this.setState({
-      isAuthenticated: isLogin,
+      user: {},
+      isAuthenticated: false,
     });
   }
 
@@ -45,9 +48,10 @@ class App extends React.Component {
         <Router>
           <div>
               <Header isAuthenticated={this.state.isAuthenticated}
-                      login={this.state.user.login} />
+                      login={this.state.user.login} 
+                      logOut={this.handleLogOut} />
             </div>
-            <div class="h-100 d-flex flex-column">
+            <div className="h-100 d-flex flex-column">
               <Switch>
                 <Route path="/home" component={Home}/>
                 <Route path="/items/:selector/:id" component={Items} />
@@ -56,8 +60,7 @@ class App extends React.Component {
                 <Route path="/collections/:collection_id" component={Collection} />
                 <Route path="/collections" component={Collections} />
                 <Route path="/login">
-                  <Login updateUser={this.handleUpdateUser}
-                        authenticate={this.handleAuthenticate} />
+                  <Login updateUser={this.handleUpdateUser} a={"a"}/>
                 </Route>
                 <Route path="/register" component={Register}/>
                 <Route path="/users" component={Users}/>
