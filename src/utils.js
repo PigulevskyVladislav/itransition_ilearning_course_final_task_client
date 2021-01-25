@@ -38,5 +38,5 @@ export function loading() {
 }
 
 export function getAddress() {
-  return "https://localhost:44352";
+  return "https://finaltaskserver.azurewebsites.net";
 }

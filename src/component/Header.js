@@ -13,12 +13,6 @@ class Header extends React.Component {
     }
   }
 
-  // handleAuthenticateClick = () => {
-  //   if (this.props.isAuthenticated) {
-  //     this.props.logOut();
-  //   }
-  // }
-
   render() {
     return(
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
