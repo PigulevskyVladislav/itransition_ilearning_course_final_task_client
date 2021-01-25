@@ -18,9 +18,9 @@ export function fetchData(source, callback) {
     return response;
 }
 
-export function errorBlock(message) {
+export function resultBlock(message, type) {
   return(
-    <div class="alert alert-danger" role="alert">
+    <div class={"alert alert-".concat(type)} role="alert">
       {message}
     </div>
   );
@@ -38,5 +38,5 @@ export function loading() {
 }
 
 export function getAddress() {
-  return "https://finaltaskserver.azurewebsites.net";
+  return "https://localhost:44352";
 }

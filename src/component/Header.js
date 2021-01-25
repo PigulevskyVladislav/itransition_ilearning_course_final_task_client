@@ -16,17 +16,11 @@ class Header extends React.Component {
   render() {
     return(
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
-        <a className="navbar-brand" href="/home">Final Task</a>
+          <Link className="navbar-brand" to="/home">Final Task</Link>
         <div className="collapse navbar-collapse w-100 order-1" id="navbarSupportedContent">
             <ul className="navbar-nav mr-auto">
               <li className="nav-item">
                 <Link className="nav-link" to="/home">Home</Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/login">Login</Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/register">Register</Link>
               </li>
               <li className="nav-item">
                 <Link className="nav-link" to="/items">Items</Link>
