@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { fetchData, getAddress } from "../../../utils"
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -33,7 +34,7 @@ class BiggestCollectionTable extends React.Component {
     let items = this.state.collections;
     let itemRows = items.map((item) => 
     <tr key={item.id}>
-      <td>{item.name}</td>
+      <td><Link className="nav-link" to={"/collections/".concat(item.id)}>{item.name}</Link></td>
       <td>{item.count}</td>
       <td>{item.description}</td>
     </tr>

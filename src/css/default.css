@@ -8,8 +8,13 @@
     margin-top: -50px;
 }
 
-.Header{
-  grid-template-areas: ‘logo nav’;
+.container{
+  margin-top: 20vh;
+}
+
+.col-to-center{
+  float: none;
+  margin: 0 auto;
 }
 
 #root {

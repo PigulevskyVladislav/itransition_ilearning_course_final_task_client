@@ -2,7 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { fetchData, getAddress, resultBlock } from "../utils";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../css/register.css';
 
 class Register extends React.Component {
   constructor(props) {
@@ -54,7 +53,7 @@ class Register extends React.Component {
     let error = this.state.error;
     return(
       <form id="registerForm" className="container"  onSubmit={this.handleSubmit}>
-        <div className="form-group col-lg-5 col-centered"> 
+        <div className="form-group col-lg-5 col-centered col-to-center"> 
           {this.state.isComplete && resultBlock("Successful user addition", "success")}
           {error && resultBlock(error, "danger")}
           Login:

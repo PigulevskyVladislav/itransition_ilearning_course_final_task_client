@@ -12,7 +12,12 @@ class Collections extends React.Component {
   }
 
   componentDidMount() {
-    fetchData(getAddress().concat("/collections"), this.getCollections);
+    let token = this.props.token;
+    let source = getAddress().concat("/collections");
+    if (token) {
+      source += "/byuser/".concat(token);
+    }
+    fetchData(source, this.getCollections);
   }
 
   getCollections = (response) => {
@@ -47,17 +52,21 @@ class Collections extends React.Component {
     }
 
     return(
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows}
-        </tbody>
-      </table>
+      <div className="container">
+        <h1>Collections</h1>
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows}
+          </tbody>
+        </table>
+        {this.props.token && <Link className="btn btn-success mt-5" to={"/collections/add/".concat(this.props.token)}>Create new collection</Link>}
+      </div>
     );
   }
 }

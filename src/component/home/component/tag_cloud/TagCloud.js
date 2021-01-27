@@ -45,7 +45,7 @@ class TagCloud extends React.Component {
     }
 
     return(
-      <div className="col-6">
+      <div className="col w-100">
         <div className="card">
           <div className="card-body">
             <h4 className="card-title">Tag cloud</h4>

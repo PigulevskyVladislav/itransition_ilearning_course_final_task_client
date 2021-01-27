@@ -4,6 +4,8 @@ import {
   Switch,
   Route
 } from "react-router-dom";
+import { instanceOf } from 'prop-types';
+import { withCookies, Cookies } from 'react-cookie';
 import Home from "./component/home/Home";
 import Item from "./component/item/Item"
 import Items from "./component/item/Items"
@@ -13,33 +15,47 @@ import Header from "./component/Header";
 import Register from "./component/Register";
 import Collection from "./component/collection/Collection";
 import Collections from "./component/collection/Collections";
+import CollectionPage from "./component/collection/CollectionPage";
+import CollectionAddPage from "./component/collection/CollectionAddPage";
 import "./css/default.css";
 
 class App extends React.Component {
+  static propTypes = {
+    cookies: instanceOf(Cookies).isRequired
+  };
+
   constructor(props) {
     super(props);
+    const { cookies } = props;
     this.state = {
-      isAuthenticated: false,
-      user: {},
+      login: cookies.get('login'),
+      password: cookies.get('password'),
+      token: cookies.get('token'),
     }
   }
 
   handleUpdateUser = (login, password, token) => {
-    let user = this.state.user;
-    user.login = login;
-    user.password = password;
-    user.token = token;
+    const { cookies } = this.props;
     this.setState({
-      user: user,
-      isAuthenticated: true,
+      login: login,
+      password: password,
+      token: token,
     });
+    cookies.set('login', login);
+    cookies.set('password', password);
+    cookies.set('token', token);
   }
 
   handleLogOut = () => {
+    const { cookies } = this.props;
     this.setState({
-      user: {},
-      isAuthenticated: false,
+      login: '',
+      password: '',
+      token: '',
     });
+    cookies.remove('login', null);
+    cookies.remove('password', null);
+    cookies.remove('token', null);
   }
 
   render() {
@@ -47,8 +63,7 @@ class App extends React.Component {
       <div className="h-100 d-flex flex-column">
         <Router>
           <div>
-              <Header isAuthenticated={this.state.isAuthenticated}
-                      login={this.state.user.login} 
+              <Header login={this.state.login}
                       logOut={this.handleLogOut} />
             </div>
             <div className="h-100 d-flex flex-column">
@@ -57,10 +72,12 @@ class App extends React.Component {
                 <Route path="/items/:selector/:id" component={Items} />
                 <Route path="/items/:item_id" component={Item} />
                 <Route path="/items" component={Items} />
+                <Route path="/collections/byuser/:token" component={CollectionPage} />
+                <Route path="/collections/add/:token" component={CollectionAddPage} />
                 <Route path="/collections/:collection_id" component={Collection} />
                 <Route path="/collections" component={Collections} />
                 <Route path="/login">
-                  <Login updateUser={this.handleUpdateUser} a={"a"}/>
+                  <Login updateUser={this.handleUpdateUser} />
                 </Route>
                 <Route path="/register" component={Register}/>
                 <Route path="/users" component={Users}/>
@@ -72,4 +89,4 @@ class App extends React.Component {
   }
 }
 
-export default App;
+export default withCookies(App);

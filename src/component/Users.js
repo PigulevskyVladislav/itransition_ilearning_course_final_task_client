@@ -47,18 +47,21 @@ class Users extends React.Component {
     }
 
     return(
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Login</th>
-            <th>Email</th>
-            <th>Is admin</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows}
-        </tbody>
-      </table>
+      <div className="container">
+        <h1>Users</h1>
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Login</th>
+              <th>Email</th>
+              <th>Is admin</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows}
+          </tbody>
+        </table>
+      </div>
     );
   }
 }

@@ -2,7 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { fetchData, getAddress, resultBlock } from "../utils";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../css/login.css';
 
 class Login extends React.Component {
   constructor(props) {
@@ -23,12 +22,13 @@ class Login extends React.Component {
     this.setState({password: event.target.value});
   }
 
-  handleSubmit = () => {
+  handleSubmit = (event) => {
     this.setState({
       isComplete: false,
       error: null,
     });
     fetchData(getAddress()+"/account/login/"+this.state.login+"/"+this.state.password, this.logIn);
+    event.preventDefault();
   }
 
   logIn = (response) => {
@@ -48,9 +48,8 @@ class Login extends React.Component {
   render() {
     let error = this.state.error;
     return(
-      <div className="container">
-        <form id="loginForm">
-          <div className="form-group col-lg-5 col-centered"> 
+        <form id="loginForm" className="container" onSubmit={this.handleSubmit}>
+          <div className="form-group col-lg-5 col-centered col-to-center"> 
             {this.state.isComplete && resultBlock("Successful login", "success")}
             {error && resultBlock(error, "danger")}
             Login:
@@ -58,18 +57,17 @@ class Login extends React.Component {
             Password:
             <input type="password" className="form-control" value={this.state.value} onChange={this.handleChangePassword} />
             <br />
-            <input type="button" className="btn btn-primary" value="Login" onClick={this.handleSubmit} />
+            <input type="submit" className="btn btn-primary" value="Login" />
+          </div>
+          <div className="d-flex flex-column mt-3">
+            <p className="text-center mb-0">Have no account yet?</p>
+            <Link to="/register">
+              <p className="text-center">
+                Register
+              </p>
+            </Link>
           </div>
         </form>
-        <div className="d-flex flex-column mt-3">
-          <p className="text-center mb-0">Have no account yet?</p>
-          <Link to="/register">
-            <p className="text-center">
-              Register
-            </p>
-          </Link>
-        </div>
-      </div>
     );
   }
 }

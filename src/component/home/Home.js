@@ -15,9 +15,17 @@ class Home extends React.Component {
   
   render() {  
     return(
-      <div>
-        <LastItemTable/>
-        <BiggestCollectionTable />
+      <div className="container">
+        <div className="row">
+          <div className="col w-50">
+            <h1>Last added items</h1>
+            <LastItemTable/>
+          </div>
+          <div className="col w-50">
+            <h1>Biggest collections</h1>
+            <BiggestCollectionTable />
+          </div>
+        </div>
         <TagCloud />
       </div>
     );

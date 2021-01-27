@@ -20,7 +20,7 @@ export function fetchData(source, callback) {
 
 export function resultBlock(message, type) {
   return(
-    <div class={"alert alert-".concat(type)} role="alert">
+    <div className={"alert alert-".concat(type)} role="alert">
       {message}
     </div>
   );

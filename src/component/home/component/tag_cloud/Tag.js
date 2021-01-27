@@ -4,10 +4,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../../../css/tag.css';
 
 class Tag extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   handleTagClick = (event) => {
     alert(this.props.name);
     // TODO Tag click
