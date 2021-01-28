@@ -3,7 +3,7 @@ import Collections from "./Collections";
 import { instanceOf } from 'prop-types';
 import { withCookies, Cookies } from 'react-cookie';
 
-class CollectionPage extends React.Component {
+class UserCollectionsPage extends React.Component {
   static propTypes = {
     cookies: instanceOf(Cookies).isRequired
   };
@@ -24,4 +24,4 @@ class CollectionPage extends React.Component {
   }
 }
 
-export default withCookies(CollectionPage);
+export default withCookies(UserCollectionsPage);

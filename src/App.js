@@ -15,7 +15,7 @@ import Header from "./component/Header";
 import Register from "./component/Register";
 import Collection from "./component/collection/Collection";
 import Collections from "./component/collection/Collections";
-import CollectionPage from "./component/collection/CollectionPage";
+import UserCollectionsPage from "./component/collection/UserCollectionsPage";
 import CollectionAddPage from "./component/collection/CollectionAddPage";
 import "./css/default.css";
 
@@ -72,7 +72,7 @@ class App extends React.Component {
                 <Route path="/items/:selector/:id" component={Items} />
                 <Route path="/items/:item_id" component={Item} />
                 <Route path="/items" component={Items} />
-                <Route path="/collections/byuser/:token" component={CollectionPage} />
+                <Route path="/collections/byuser/:token" component={UserCollectionsPage} />
                 <Route path="/collections/add/:token" component={CollectionAddPage} />
                 <Route path="/collections/:collection_id" component={Collection} />
                 <Route path="/collections" component={Collections} />
