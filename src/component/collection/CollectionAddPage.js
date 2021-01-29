@@ -40,7 +40,6 @@ class CollectionAddPage extends React.Component {
 
   componentDidMount() {
     fetchData(getAddress().concat("/collections/types"), this.getTypes);
-    //alert(this.state.typeId);
   }
 
   getTypes = (response) => {
@@ -99,8 +98,6 @@ class CollectionAddPage extends React.Component {
 
   handleTypeChange = (event) => {
     this.setState({ typeId: event.target.value });
-    //alert(event.target.value);
-    //alert(this.state.typeId);
   }
 
   handleExtraNameChange = (event) => {
@@ -152,8 +149,6 @@ class CollectionAddPage extends React.Component {
     newCollection.user_id = this.props.cookies.get('token');
     
     fetchPostData(getAddress().concat("/collections/add"), newCollection)
-    alert('SEND');
-    console.log(newCollection);
   }
 
   addExtraFields = (collection) => {

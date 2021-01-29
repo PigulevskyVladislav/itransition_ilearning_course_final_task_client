@@ -11,7 +11,6 @@ class UserCollectionsPage extends React.Component {
   constructor(props) {
     super(props);
     const { cookies } = props;
-    alert(cookies.get('token'));
     this.state = {
       token: cookies.get('token'),
     }

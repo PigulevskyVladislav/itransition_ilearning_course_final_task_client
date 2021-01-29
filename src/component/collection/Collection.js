@@ -25,8 +25,6 @@ class Collection extends React.Component {
 
   getCollection = (response) => {
     let result = response.result;
-    //alert(response.result);
-    //alert(response.error);
     if (result) {
       this.setState({
         id: result.id,
