@@ -1,21 +1,37 @@
 import React from "react";
 import FormErrors from "../FormErrors"
-import { fetchData, getAddress, errorPage, resultBlock, loading } from "../../utils";
-import { EXCLUDE_ROW } from "@blueprintjs/icons/lib/esm/generated/iconContents";
+import { instanceOf } from 'prop-types';
+import { withCookies, Cookies } from 'react-cookie';
+import { fetchData, fetchPostData, getAddress, errorPage, resultBlock, loading } from "../../utils";
+import "../../css/image_overlay.css"
 
 class CollectionAddPage extends React.Component {
+  static propTypes = {
+    cookies: instanceOf(Cookies).isRequired
+  };
+
   constructor(props) {
     super(props);
+    
     this.state = {
       name: '',
+      typeId: '-1',
       description: '',
       image: null,
+      imageURL: null,
       imageName: '',
-      token: this.props.token,
       types: [],
+      numbers: [],
+      strings: [],
+      texts: [],
+      dates: [],
+      bools: [], 
+      newFieldType: 'numbers',
+      newFieldName: '',
       error: null,
-      formErrors: {name: '', description: ''},
+      formErrors: {name: '', description: '', newFieldName: ''},
       nameValid: false,
+      typeIdValid: false,
       descriptionValid: true,
       formValid: false,
       isLoaded: false,
@@ -24,6 +40,7 @@ class CollectionAddPage extends React.Component {
 
   componentDidMount() {
     fetchData(getAddress().concat("/collections/types"), this.getTypes);
+    //alert(this.state.typeId);
   }
 
   getTypes = (response) => {
@@ -43,28 +60,131 @@ class CollectionAddPage extends React.Component {
   onFileInputChange = (event) => {
     let file = event.target.files[0];
     this.setState({
-      image : URL.createObjectURL(file),
+      image: file,
+      imageURL: URL.createObjectURL(file),
       imageName: file.name,
     });
   }
 
-  handleUserInput (event) {
+  removeImage = () => {
+    this.setState({
+      image: null,
+      imageURL: null,
+      imageName: '',
+    });
+  }
+
+  handleAddExtraField = () => {
+    let fieldArrayName = this.state.newFieldType;
+    let fieldArray = this.state[fieldArrayName];
+    let newFieldName = this.state.newFieldName;
+    let error = newFieldName.length >= 3 
+                && newFieldName.length <= 25 ?
+                '' : 'an extra field must have 3-25 chars';
+    if (fieldArray.indexOf(newFieldName) > -1) {
+      error = 'an extra field with the same name already exists' 
+    }
+    if (fieldArray.length === 3) {
+      error = 'you can only have 3 extra fields of the same type' 
+    }
+    if (!error) {
+      fieldArray.push(newFieldName);
+      this.setState({ [fieldArrayName]: fieldArray });
+    } else {
+      let formErrors = this.state.formErrors;
+      formErrors.newFieldName = error;
+      this.setState({ formErrors });
+    }
+  }
+
+  handleTypeChange = (event) => {
+    this.setState({ typeId: event.target.value });
+    //alert(event.target.value);
+    //alert(this.state.typeId);
+  }
+
+  handleExtraNameChange = (event) => {
+    this.setState({ newFieldName: event.target.value });
+  }
+
+  handleExtraTypeChange = (event) => {
+    this.setState({ newFieldType: event.target.value });
+  }
+
+  handleUserInput = (event) => {
     const name = event.target.name;
     const value = event.target.value;
     this.setState({[name]: value}, 
                   () => { this.validateField(name, value) });
   }
 
-  removeImage = () => {
-    this.setState({
-      image: null,
-      imageName: '',
-    });
+  handleSubmit = (event) => {
+    let image = this.state.image;
+    if (image) {
+      let response = this.uploadImage(image);
+      console.log(response);
+      let result = response.result;
+      if (result) {
+       this.setState({ imageURL: result.secure_url }) 
+      }
+      if (response.error) {
+        this.setState({ error: "Image loading error" });
+        return;
+      }
+    }
+    try {
+      this.sendData();
+    } catch (error) {
+      console.log(error);
+    }
+    
+    event.preventDefault();
   }
 
-  handleSubmit = () => {
-    alert("COOL");
+  sendData = () => {
+    const { name, description, typeId, imageURL } = this.state;
+    let newCollection = {};
+    newCollection.name = name;
+    newCollection.description = description;
+    newCollection.picture = null; //TODO: make image update
+    this.addExtraFields(newCollection);
+    newCollection.type_id = typeId;
+    newCollection.user_id = this.props.cookies.get('token');
+    
+    fetchPostData(getAddress().concat("/collections/add"), newCollection)
+    alert('SEND');
+    console.log(newCollection);
   }
+
+  addExtraFields = (collection) => {
+    const { numbers, strings, texts, 
+            dates, bools } = this.state;
+    if (!(numbers.length === 0 && strings.length === 0 && texts.length === 0 
+       && dates.length === 0 && bools.length === 0)) {
+      collection.extra_field_name = {};
+      this.addExtraFieldsOfType(collection, numbers, 'numbers');
+      this.addExtraFieldsOfType(collection, strings, 'strings');
+      this.addExtraFieldsOfType(collection, texts, 'texts');
+      this.addExtraFieldsOfType(collection, dates, 'dates');
+      this.addExtraFieldsOfType(collection, bools, 'bools');
+      collection.extra_field_name = JSON.stringify(collection.extra_field_name);
+    }
+    return collection;
+  }
+
+  addExtraFieldsOfType = (collection, fields, type) => {
+    if (fields.length !== 0) {
+      collection.extra_field_name[type] = fields;
+    }
+  }
+
+  uploadImage = (image) => {
+    let data = new FormData();
+    data.append("file", image);
+    data.append("upload_preset", "finaltaskimages");
+    let response = fetchPostData("https://api.cloudinary.com/v1_1/finaltaskcloud/image/", image)
+    return response;
+  } 
 
   errorClass(error) {
     return(error.length === 0 ? '' : 'has-error');
@@ -73,41 +193,50 @@ class CollectionAddPage extends React.Component {
   validateField(fieldName, value) {
       let fieldValidationErrors = this.state.formErrors;
       let nameValid = this.state.nameValid;
+      let typeIdValid = this.state.typeIdValid;
       let descriptionValid = this.state.descriptionValid;
     switch(fieldName) {
         case 'name':
           nameValid = value.length >= 3 && value.length <= 25;
-          fieldValidationErrors.name = nameValid ? '' : ' must have 3-25 chars';
+          fieldValidationErrors.name = nameValid ? '' : 'name must have 3-25 chars';
+          break;
+        case 'typeId':
+          typeIdValid = value !== '-1';
+          fieldValidationErrors.typeId = typeIdValid ? '': 'choose collection type';
           break;
         case 'description':
           descriptionValid = value.length <= 100;
-          fieldValidationErrors.description = descriptionValid ? '': ' must have 0-100 chars';
+          fieldValidationErrors.description = descriptionValid ? '': 'description must have 0-100 chars';
           break;
         default:
           break;
       }
       this.setState({formErrors: fieldValidationErrors,
                       nameValid: nameValid,
+                      typeIdValid: typeIdValid,
                       descriptionValid: descriptionValid
                     }, this.validateForm);
     }
     validateForm() {
       this.setState({formValid: this.state.nameValid &&
+                                this.state.typeIdValid &&
                                 this.state.descriptionValid});
   }
 
   renderDropdown() {
-    let image = this.state.image;
-    if (image) {
+    let imageURL = this.state.imageURL;
+    if (imageURL) {
       return(
-        <div className="position-relative">
-          <button type="button" 
-                  className="close p-2 position-absolute" 
-                  aria-label="Close"
-                  onClick={this.removeImage} >
+        <div className="img-wrapper">
+          <div className="img-overlay">
+            <button type="button" 
+                    className="close p-2 position-absolute " 
+                    aria-label="Close"
+                    onClick={this.removeImage} >
               <span aria-hidden="true">&times;</span>
             </button>
-          <img src={image} alt={this.state.imageName} onDragStart={this.preventDragHandler} className="img-fluid" />
+          </div>
+          <img src={imageURL} alt={this.state.imageName} className="img-fluid img-responsive" />
         </div>
       );
     } else {
@@ -126,28 +255,66 @@ class CollectionAddPage extends React.Component {
     );
     return options;
   }
+  
+  renderArray(items, color) {
+    let result = items.map((item, index) => 
+      <label className={"badge rounded-pill bg-".concat(color)} 
+             onClick={() => {
+               let index = items.indexOf(item);
+               this.setState({ 
+                 [items]: items.splice(index, 1)
+                 });}}
+             key={index}>{item}</label>);
+    return result;
+  }
 
   render() {
-    const { error, isLoaded, formErrors, formValid} = this.state;
+    const { numbers, strings, texts, dates, bools, error, isLoaded} = this.state;
     if (error) {
       return errorPage(error); 
     } else if (!isLoaded) {
       return loading();
     } else 
     return(
-      <form className="container" onSubmit={this.handleSubmit}>
+      <form className="container" onSubmit={this.handleSubmit.bind(this)}>
         <div className={"form-group col-lg-5 col-centered col-to-center ".concat(this.errorClass(!this.state.formValid))}> 
           
-          <label htmlFor="name">Name:</label>
+          <label>Name:</label>
           <input type="text" name="name" value={this.state.name} className="form-control" onChange={this.handleUserInput.bind(this)} />
-          Type:
-          <select className="custom-select" id="inputGroupSelect01" defaultValue="1">
+          <label>Type:</label>
+          <select name="typeId" className="custom-select" id="inputGroupSelect" defaultValue={-1} onChange={this.handleUserInput.bind(this)}>
+            <option value={-1}>Choose a salutation ...</option>
             {this.renderOptions()}
           </select>
-          <label htmlFor="name">Description:</label>
+          <label>Description:</label>
           <input type="text" name="description" value={this.state.description} className="form-control" onChange={this.handleUserInput.bind(this)} />
-          Upload image:
+          <label>Upload image:</label>
           {this.renderDropdown()}
+          <label>Add extra field:</label>
+          <div className="form-group">
+            <label>Type:</label>
+            <select className="custom-select w-50 mr-2 ml-2" onChange={this.handleExtraTypeChange.bind(this)} defaultValue="1">
+              <option value="numbers" className="bg-primary text-white">number</option>
+              <option value="strings" className="bg-warning text-white">string</option>
+              <option value="texts" className="bg-danger text-white">text</option>
+              <option value="dates" className="bg-info text-white">date</option>
+              <option value="bools" className="bg-success text-white">bool</option>
+            </select>
+            <input type="button" className="btn btn-primary" value="Add" onClick={this.handleAddExtraField} />
+          </div>
+          <div className="form-group">
+            <label>Field name:</label>
+            <input type="text" value={this.state.newFieldName} className="form-control" onChange={this.handleExtraNameChange.bind(this)} />
+            <div className="form-group d-flex container-fluid">
+              <div className="row">
+                {numbers.length > 0 && this.renderArray(numbers, 'primary')}
+                {strings.length > 0 && this.renderArray(strings, 'warning')}
+                {texts.length > 0 && this.renderArray(texts, 'danger')}
+                {dates.length > 0 && this.renderArray(dates, 'info')}
+                {bools.length > 0 && this.renderArray(bools, 'success')}
+              </div>
+            </div>
+          </div>
           <br />
           <input type="submit" className="btn btn-primary" value="Create collection" disabled={!this.state.formValid}/>
           <div className="panel panel-default">
@@ -160,4 +327,4 @@ class CollectionAddPage extends React.Component {
   }
 }
 
-export default CollectionAddPage;
+export default withCookies(CollectionAddPage);

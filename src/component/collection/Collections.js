@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { fetchData, getAddress } from "../../utils"
+import { withCookies } from 'react-cookie';
 
 class Collections extends React.Component {
   constructor(props) {
@@ -65,10 +66,10 @@ class Collections extends React.Component {
             {rows}
           </tbody>
         </table>
-        {this.props.token && <Link className="btn btn-success mt-5" to={"/collections/add/".concat(this.props.token)}>Create new collection</Link>}
+        {this.props.token && <Link className="btn btn-success mt-5" to={"/collections/add/"}>Create new collection</Link>}
       </div>
     );
   }
 }
 
-export default Collections;
+export default withCookies(Collections);

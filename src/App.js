@@ -72,8 +72,8 @@ class App extends React.Component {
                 <Route path="/items/:selector/:id" component={Items} />
                 <Route path="/items/:item_id" component={Item} />
                 <Route path="/items" component={Items} />
-                <Route path="/collections/byuser/:token" component={UserCollectionsPage} />
-                <Route path="/collections/add/:token" component={CollectionAddPage} />
+                <Route path="/collections/byuser/" component={UserCollectionsPage} />
+                <Route path="/collections/add/" component={CollectionAddPage} />
                 <Route path="/collections/:collection_id" component={Collection} />
                 <Route path="/collections" component={Collections} />
                 <Route path="/login">

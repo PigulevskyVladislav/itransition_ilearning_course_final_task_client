@@ -9,7 +9,7 @@ class FormErrors extends React.Component {
         {Object.keys(formErrors).map((fieldName, i) => {
           if(formErrors[fieldName].length > 0){
             return (
-              <p className='alert alert-danger' key={i}>{fieldName} {formErrors[fieldName]}</p>
+              <p className='alert alert-danger' key={i}>{formErrors[fieldName]}</p>
             )        
           } else {
             return '';

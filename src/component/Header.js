@@ -15,7 +15,7 @@ class Header extends React.Component {
         <div className="collapse navbar-collapse w-100 order-2" >
             <ul className="navbar-nav ml-auto justify-content-end">
               <li className="nav-item">
-                <Link className="nav-link" to="/collections/byuser/:token">My Collections</Link>
+                <Link className="nav-link" to="/collections/byuser/">My Collections</Link>
               </li>
               <li className="nav-item">
                 <a className="nav-link" href="/home">{this.props.login}</a>

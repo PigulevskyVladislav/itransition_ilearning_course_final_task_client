@@ -1,5 +1,24 @@
 import ErrorPage from "./component/ErrorPage";
 
+export async function fetchPostData(source, data) {
+  let response = { result: null, error: null }
+  try {
+    const response = await fetch(source, {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: { 
+        "content-type": "application/json" 
+      },
+    });
+    response.result = await response.json();
+    console.log(response.result);
+  } catch (error) {
+    alert('ERROR');
+    response.error = error;
+  }
+  return response;
+}
+
 export function fetchData(source, callback) {
   let response = { result: null, error: null }
     fetch(source)
