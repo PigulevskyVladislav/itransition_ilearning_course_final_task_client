@@ -9,14 +9,15 @@ import { withCookies, Cookies } from 'react-cookie';
 import Home from "./component/home/Home";
 import Item from "./component/item/Item"
 import Items from "./component/item/Items"
+import ItemAddPage from "./component/item/ItemAddPage"
 import Users from "./component/Users"
 import Login from "./component/Login";
 import Header from "./component/Header";
 import Register from "./component/Register";
 import Collection from "./component/collection/Collection";
 import Collections from "./component/collection/Collections";
-import UserCollectionsPage from "./component/collection/UserCollectionsPage";
 import CollectionAddPage from "./component/collection/CollectionAddPage";
+import UserCollectionsPage from "./component/collection/UserCollectionsPage";
 import "./css/default.css";
 
 class App extends React.Component {
@@ -31,31 +32,36 @@ class App extends React.Component {
       login: cookies.get('login'),
       password: cookies.get('password'),
       token: cookies.get('token'),
+      isAdmin: cookies.get('isAdmin'),
     }
   }
 
-  handleUpdateUser = (login, password, token) => {
+  handleUpdateUser = (login, password, token, isAdmin) => {
     const { cookies } = this.props;
     this.setState({
       login: login,
       password: password,
       token: token,
+      isAdmin: Boolean(isAdmin),
     });
     cookies.set('login', login);
     cookies.set('password', password);
     cookies.set('token', token);
+    cookies.set('isAdmin', this.state.isAdmin);
   }
 
   handleLogOut = () => {
     const { cookies } = this.props;
+    cookies.remove('login', null);
+    cookies.remove('password', null);
+    cookies.remove('token', null);
+    cookies.remove('isAdmin', null);
     this.setState({
       login: '',
       password: '',
       token: '',
+      isAdmin: false,
     });
-    cookies.remove('login', null);
-    cookies.remove('password', null);
-    cookies.remove('token', null);
   }
 
   render() {
@@ -69,6 +75,7 @@ class App extends React.Component {
             <div className="h-100 d-flex flex-column">
               <Switch>
                 <Route path="/home" component={Home}/>
+                <Route path="/items/add/:collection_id" component={ItemAddPage}/>
                 <Route path="/items/:selector/:id" component={Items} />
                 <Route path="/items/:item_id" component={Item} />
                 <Route path="/items" component={Items} />

@@ -1,22 +1,47 @@
 import ErrorPage from "./component/ErrorPage";
 
-export async function fetchPostData(source, data) {
-  let response = { result: null, error: null }
-  try {
-    const response = await fetch(source, {
+export function fetchPostData(source, data, callback) {
+  let response = { result: null, error: null };
+    fetch(source, {
       method: 'POST',
       body: JSON.stringify(data),
       headers: { 
         "content-type": "application/json" 
       },
-    });
-    response.result = await response.json();
-    console.log(response.result);
-  } catch (error) {
-    alert('ERROR');
-    response.error = error;
-  }
+    }).then(res => res.json())
+      .then(
+      (result) => {
+        response.result = result;
+        callback(response);
+      }
+    ,
+      (error) => {
+        response.error = error;
+        callback(response);
+      }
+  );
   return response;
+}
+
+export function fetchPostImage(data, newCollection, fetchCallback, callback) {
+  let response = { result: null, error: null }
+
+    fetch("https://api.cloudinary.com/v1_1/finaltaskcloud/image/upload", {
+      method: 'POST',
+      body: data
+    })
+    .then(res => res.json())
+      .then(
+        (result) => {
+          newCollection.picture = result.secure_url;
+          return fetchCallback(getAddress().concat("/collections/add"), newCollection, callback);
+        }
+      ,
+        () => {
+          response.error = 'Upload image error';
+          return(response);
+        }
+    );
 }
 
 export function fetchData(source, callback) {

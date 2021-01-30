@@ -15,7 +15,7 @@ class Home extends React.Component {
   
   render() {  
     return(
-      <div className="container">
+      <div className="container page-begin">
         <div className="row">
           <div className="col w-50">
             <h1>Last added items</h1>

@@ -32,9 +32,11 @@ class Login extends React.Component {
   }
 
   logIn = (response) => {
-    let token = response.result;
+    let result = JSON.parse(response.result);
+    let token = result.user_id;
+    let isAdmin = Boolean(result.isAdmin);
     if (token) {
-      this.props.updateUser(this.state.login, this.state.password, token);
+      this.props.updateUser(this.state.login, this.state.password, token, isAdmin);
       this.setState({isComplete: true});
     } else {
       let error = response.error;
@@ -48,7 +50,7 @@ class Login extends React.Component {
   render() {
     let error = this.state.error;
     return(
-        <form id="loginForm" className="container" onSubmit={this.handleSubmit}>
+        <form id="loginForm" className="container page-begin" onSubmit={this.handleSubmit}>
           <div className="form-group col-lg-5 col-centered col-to-center"> 
             {this.state.isComplete && resultBlock("Successful login", "success")}
             {error && resultBlock(error, "danger")}

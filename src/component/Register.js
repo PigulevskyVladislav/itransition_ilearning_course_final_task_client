@@ -52,7 +52,7 @@ class Register extends React.Component {
   render() {
     let error = this.state.error;
     return(
-      <form id="registerForm" className="container"  onSubmit={this.handleSubmit}>
+      <form id="registerForm" className="container page-begin"  onSubmit={this.handleSubmit}>
         <div className="form-group col-lg-5 col-centered col-to-center"> 
           {this.state.isComplete && resultBlock("Successful user addition", "success")}
           {error && resultBlock(error, "danger")}

@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { fetchData, getAddress } from "../../utils"
 
 class Items extends React.Component {
@@ -44,21 +45,20 @@ class Items extends React.Component {
     let items = this.state.items;
     let itemRows = items.map((item) => 
     <tr key={item.id}>
-      <td>{item.name}</td>
+      <td><Link className="nav-link" to={"/items/".concat(item.id)}>{item.name}</Link></td>
     </tr>
     );
     return itemRows;
   }
 
-  render() {
+  
+  renderTable = () => {
     let rows;
     if (this.state.isLoaded) {
       rows = this.renderItems();
     }
-
-    return(
-      <div className="container">
-        <h1>Items</h1>
+    if (this.state.items.length !== 0) {
+      return (
         <table className="table">
           <thead>
             <tr>
@@ -69,6 +69,21 @@ class Items extends React.Component {
             {rows}
           </tbody>
         </table>
+      );
+    } else {
+      return (
+        <div className="alert alert-dark empty-table">
+          <h1 className="font-weight-light">This table is empty</h1>
+        </div>
+      );
+    }
+  }
+
+  render() {
+    return(
+      <div className="container">
+        <h1>Items</h1>
+        {this.renderTable()}
       </div>
     );
   }

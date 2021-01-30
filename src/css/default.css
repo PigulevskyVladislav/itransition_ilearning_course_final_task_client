@@ -8,8 +8,19 @@
     margin-top: -50px;
 }
 
-.container{
-  margin-top: 20vh;
+.collection-image {
+  max-width:30vh;
+  max-height:30vh;
+}
+
+.empty-table{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.page-begin{
+  margin-top: 10vh;
 }
 
 .col-to-center{

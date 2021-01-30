@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { fetchData, getAddress } from "../../../utils"
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -34,7 +35,7 @@ class LastItemTable extends React.Component {
     let items = this.state.items;
     let itemRows = items.map((item) => 
     <tr key={item.id}>
-      <td>{item.name}</td>
+      <td><Link className="nav-link" to={"/items/".concat(item.id)}>{item.name}</Link></td>
       <td>{item.collection_name}</td>
     </tr>
     );

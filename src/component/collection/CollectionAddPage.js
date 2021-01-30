@@ -2,7 +2,7 @@ import React from "react";
 import FormErrors from "../FormErrors"
 import { instanceOf } from 'prop-types';
 import { withCookies, Cookies } from 'react-cookie';
-import { fetchData, fetchPostData, getAddress, errorPage, resultBlock, loading } from "../../utils";
+import { fetchData, fetchPostData, fetchPostImage, getAddress, errorPage, resultBlock, loading } from "../../utils";
 import "../../css/image_overlay.css"
 
 class CollectionAddPage extends React.Component {
@@ -18,6 +18,7 @@ class CollectionAddPage extends React.Component {
       typeId: '-1',
       description: '',
       image: null,
+      localImageURL: null,
       imageURL: null,
       imageName: '',
       types: [],
@@ -35,6 +36,7 @@ class CollectionAddPage extends React.Component {
       descriptionValid: true,
       formValid: false,
       isLoaded: false,
+      isCreated: false,
     }
   }
 
@@ -60,7 +62,7 @@ class CollectionAddPage extends React.Component {
     let file = event.target.files[0];
     this.setState({
       image: file,
-      imageURL: URL.createObjectURL(file),
+      localImageURL: URL.createObjectURL(file),
       imageName: file.name,
     });
   }
@@ -68,6 +70,7 @@ class CollectionAddPage extends React.Component {
   removeImage = () => {
     this.setState({
       image: null,
+      localImageURL: null,
       imageURL: null,
       imageName: '',
     });
@@ -116,39 +119,49 @@ class CollectionAddPage extends React.Component {
   }
 
   handleSubmit = (event) => {
-    let image = this.state.image;
-    if (image) {
-      let response = this.uploadImage(image);
-      console.log(response);
-      let result = response.result;
-      if (result) {
-       this.setState({ imageURL: result.secure_url }) 
-      }
-      if (response.error) {
-        this.setState({ error: "Image loading error" });
-        return;
-      }
-    }
     try {
       this.sendData();
     } catch (error) {
-      console.log(error);
+      this.setState({ error });
     }
     
     event.preventDefault();
   }
 
+  uploadImageCallback = (response) => {
+    let result = response.result;
+    if (result) {
+      this.setState({ imageURL: result.url }) 
+    } else {
+      this.setState({ error: { message: "Image loading error" } });
+    }
+  }
+
   sendData = () => {
-    const { name, description, typeId, imageURL } = this.state;
+    const { name, description, typeId, image } = this.state;
     let newCollection = {};
     newCollection.name = name;
     newCollection.description = description;
-    newCollection.picture = null; //TODO: make image update
+    newCollection.picture = null;
     this.addExtraFields(newCollection);
     newCollection.type_id = typeId;
     newCollection.user_id = this.props.cookies.get('token');
-    
-    fetchPostData(getAddress().concat("/collections/add"), newCollection)
+    if (image) {
+      this.uploadImage(image, newCollection);
+    } else {    
+      fetchPostData(getAddress().concat("/collections/add"), newCollection, this.checkResult);
+    }
+  }
+
+  checkResult = (response) => {
+    if (response.result) {
+      this.setState({ 
+        isCreated: true,
+        error: null
+      });
+    } else {
+      this.setState({ error: response.error });
+    }
   }
 
   addExtraFields = (collection) => {
@@ -173,17 +186,16 @@ class CollectionAddPage extends React.Component {
     }
   }
 
-  uploadImage = (image) => {
+  uploadImage = (image, newCollection) => {
     let data = new FormData();
     data.append("file", image);
     data.append("upload_preset", "finaltaskimages");
-    let response = fetchPostData("https://api.cloudinary.com/v1_1/finaltaskcloud/image/", image)
-    return response;
+    fetchPostImage(data, newCollection, fetchPostData, this.checkResult);
   } 
 
   errorClass(error) {
     return(error.length === 0 ? '' : 'has-error');
- }
+  }
 
   validateField(fieldName, value) {
       let fieldValidationErrors = this.state.formErrors;
@@ -219,10 +231,10 @@ class CollectionAddPage extends React.Component {
   }
 
   renderDropdown() {
-    let imageURL = this.state.imageURL;
-    if (imageURL) {
+    let localImageURL = this.state.localImageURL;
+    if (localImageURL) {
       return(
-        <div className="img-wrapper">
+        <div className="img-wrapper collection-image">
           <div className="img-overlay">
             <button type="button" 
                     className="close p-2 position-absolute " 
@@ -231,7 +243,7 @@ class CollectionAddPage extends React.Component {
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
-          <img src={imageURL} alt={this.state.imageName} className="img-fluid img-responsive" />
+          <img src={localImageURL} alt={this.state.imageName} className="img-fluid img-responsive collection-image" />
         </div>
       );
     } else {
@@ -264,14 +276,14 @@ class CollectionAddPage extends React.Component {
   }
 
   render() {
-    const { numbers, strings, texts, dates, bools, error, isLoaded} = this.state;
+    const { numbers, strings, texts, dates, bools, error, isLoaded, isCreated} = this.state;
     if (error) {
       return errorPage(error); 
     } else if (!isLoaded) {
       return loading();
     } else 
     return(
-      <form className="container" onSubmit={this.handleSubmit.bind(this)}>
+      <form className="container page-begin" onSubmit={this.handleSubmit.bind(this)}>
         <div className={"form-group col-lg-5 col-centered col-to-center ".concat(this.errorClass(!this.state.formValid))}> 
           
           <label>Name:</label>
@@ -315,7 +327,8 @@ class CollectionAddPage extends React.Component {
           <div className="panel panel-default">
             <FormErrors formErrors={this.state.formErrors} />
           </div> 
-          {error && resultBlock(error, "danger")}
+          {error && resultBlock(error.message, "danger")}
+          {isCreated && resultBlock('collection was created', "success")}
         </div>
       </form>
     );
