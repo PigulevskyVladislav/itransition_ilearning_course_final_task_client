@@ -1,6 +1,7 @@
 import React from "react";
+import Select from 'react-select';
 import FormErrors from "../FormErrors"
-import { fetchData, fetchPostData, fetchPostImage, getAddress, errorPage, resultBlock, loading } from "../../utils";
+import { fetchData, fetchPostData, getAddress, errorPage, resultBlock, loading } from "../../utils";
 
 class ItemAddPage extends React.Component {
   constructor(props){
@@ -19,11 +20,15 @@ class ItemAddPage extends React.Component {
       datesValue: [],
       boolsValue: [], 
       boolsName: [], 
+      options: [],
+      selectedOptions: [],
       error: null,
-      formErrors: {name: ''},
+      formErrors: {name: '', result: ''},
       nameValid: false,
       formValid: false,
-      isLoaded: false,
+      haveExtraField: true,
+      isTagsLoaded: false,
+      isExtraFieldsLoaded: false,
       isCreated: false,
     }
   }
@@ -32,10 +37,16 @@ class ItemAddPage extends React.Component {
     let id = this.props.match.params.collection_id;
     this.setState({ collectionId: id });
     fetchData(getAddress().concat("/collections/extrafieldname/".concat(id)), this.getItem);
+    fetchData(getAddress().concat("/tags"), this.getTags);
   }
 
   getItem = (response) => {
     let result = response.result;
+    if (result === 'false') {
+      this.setState({
+        haveExraField: false,
+      });
+    } else
     if (result) {
       this.fillExtraFieldName(result.numbers, 'numbersName');
       this.fillExtraFieldName(result.strings, 'stringsName');
@@ -43,11 +54,31 @@ class ItemAddPage extends React.Component {
       this.fillExtraFieldName(result.dates, 'datesName');
       this.fillExtraFieldName(result.bools, 'boolsName');
       this.setState({
-        isLoaded: true,
+        isExtraFieldsLoaded: true,
       });
     } else {
       this.setState({
-        error: { message: "Collection loading error" },
+        error: { message: "Extra field loading error" },
+      });
+    }
+  }
+
+  getTags = (response) => {
+    let result = response.result;
+    if (result) {
+      let options = result.map(item => {
+        let option = {};
+        option.value = item.id;
+        option.label = item.name;
+        return option;
+      });
+      this.setState({
+        options,
+        isTagsLoaded: true,
+      });
+    } else {
+      this.setState({
+        error: { message: "Tags loading error" },
       });
     }
   }
@@ -59,8 +90,68 @@ class ItemAddPage extends React.Component {
   }
 
   handleSubmit = (event) => {
-
+    const { name, collectionId, 
+            haveExtraField, selectedOptions,
+            numbersName, numbersValue,
+            stringsName, stringsValue,
+            textsName, textsValue,
+            datesName, datesValue,
+            boolsName, boolsValue
+    } = this.state;
+    let result = {item:{},tagIds:null};
+    let newItem = {};
+    newItem.name = name;  
+    newItem.extra_field = null;
+    newItem.collection_id = collectionId;
+    if (haveExtraField) {
+      let extraField = [];
+      extraField = extraField.concat(
+        this.getExtaraFieldArray(numbersName, numbersValue, null));
+      extraField = extraField.concat(
+        this.getExtaraFieldArray(stringsName, stringsValue, null));
+      extraField = extraField.concat(
+        this.getExtaraFieldArray(textsName, textsValue, null));
+      extraField = extraField.concat(
+        this.getExtaraFieldArray(datesName, datesValue, null));
+      extraField = extraField.concat(
+        this.getExtaraFieldArray(boolsName, boolsValue, false));
+      newItem.extra_field = extraField + "";
+    }
+    result.item = newItem;
+    let tagIds = [];
+    if (selectedOptions.length !== 0) {
+      for (let i = 0; i < selectedOptions.length; i++) {
+        tagIds.push(selectedOptions[i].value);
+      }
+    }
+    result.tagIds = tagIds;
+    result.item = newItem;
+    fetchPostData(getAddress().concat("/items/add"), result, this.checkResult);
     event.preventDefault();
+  }
+
+  getExtaraFieldArray = (names, values, empty) => {
+    let result = [];
+    if (names.length !== 0) {
+      for (let i = 0; i < names.length; i++) {
+        let value = values[i] || empty;
+        result.push({name:names[i],value:value})
+      }
+    }
+    return result;
+  }
+
+  checkResult = (response) => {
+    const { formErrors } = this.state;
+    if (response.result) {
+      formErrors.result = ''
+      this.setState({ 
+        isCreated: true,
+      });
+    } else {
+      formErrors.result = 'item adding error';
+    }
+    this.setState({ formErrors });
   }
 
   handleExtraFieldChange = (event) => {
@@ -71,7 +162,6 @@ class ItemAddPage extends React.Component {
     let index = event.target.id;
     fields[index] = value;
     this.setState({ [inputData]: fields });
-    console.log(this.state[inputData]);
   }
 
   handleUserInput = (event) => {
@@ -80,6 +170,12 @@ class ItemAddPage extends React.Component {
     this.setState({[name]: value}, 
                   () => { this.validateField(name, value) });
   }
+
+  handleChangeTag = selectedOptions => {
+    this.setState({ 
+      selectedOptions 
+    });
+  };
 
   errorClass(error) {
     return(error.length === 0 ? '' : 'has-error');
@@ -127,17 +223,16 @@ class ItemAddPage extends React.Component {
           <label name={"label_bools_"+index} className="form-check-label ml-2">{field}</label>
         </div>
       );
-      console.log(itemFields);
       return itemFields;
     }
     return null;
   }
 
   render() {
-    const { numbers, strings, texts, dates, bools, error, isLoaded, isCreated} = this.state;
+    const {options, selectedOptions, error, isExtraFieldsLoaded, isTagsLoaded, isCreated, haveExtraField} = this.state;
     if (error) {
       return errorPage(error); 
-    } else if (!isLoaded) {
+    } else if (!((isExtraFieldsLoaded || !haveExtraField) && isTagsLoaded)) {
       return loading();
     } else 
     return(
@@ -152,12 +247,18 @@ class ItemAddPage extends React.Component {
           {this.renderFields('texts', 'text')}
           {this.renderFields('dates', 'date')}
           {this.renderBools()}
+          <label>Tags:</label>
+          <Select
+            value={selectedOptions}
+            onChange={this.handleChangeTag}
+            options={options}
+            isMulti={true}
+          />
           <br />
-          <input type="submit" className="btn btn-primary" value="Create collection" disabled={!this.state.formValid}/>
+          <input type="submit" className="btn btn-primary" value="Create item" disabled={!this.state.formValid}/>
           <div className="panel panel-default">
             <FormErrors formErrors={this.state.formErrors} />
           </div> 
-          {error && resultBlock(error.message, "danger")}
           {isCreated && resultBlock('item was created', "success")}
         </div>
       </form>

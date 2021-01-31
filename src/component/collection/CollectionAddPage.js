@@ -30,7 +30,7 @@ class CollectionAddPage extends React.Component {
       newFieldType: 'numbers',
       newFieldName: '',
       error: null,
-      formErrors: {name: '', description: '', newFieldName: ''},
+      formErrors: {name: '', description: '', newFieldName: '', result: ''},
       nameValid: false,
       typeIdValid: false,
       descriptionValid: true,
@@ -154,14 +154,16 @@ class CollectionAddPage extends React.Component {
   }
 
   checkResult = (response) => {
+    const { formErrors } = this.state;
     if (response.result) {
+      formErrors.result = ''
       this.setState({ 
         isCreated: true,
-        error: null
       });
     } else {
-      this.setState({ error: response.error });
+      formErrors.result = 'collection adding error';
     }
+    this.setState({ formErrors });
   }
 
   addExtraFields = (collection) => {
@@ -327,7 +329,6 @@ class CollectionAddPage extends React.Component {
           <div className="panel panel-default">
             <FormErrors formErrors={this.state.formErrors} />
           </div> 
-          {error && resultBlock(error.message, "danger")}
           {isCreated && resultBlock('collection was created', "success")}
         </div>
       </form>
