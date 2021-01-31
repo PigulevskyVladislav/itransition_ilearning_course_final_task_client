@@ -33,11 +33,14 @@ class Login extends React.Component {
 
   logIn = (response) => {
     let result = JSON.parse(response.result);
-    let token = result.user_id;
+    let token = null;
+    if (result) {
     let isAdmin = Boolean(result.isAdmin);
+    token = result.user_id;
     if (token) {
       this.props.updateUser(this.state.login, this.state.password, token, isAdmin);
       this.setState({isComplete: true});
+    }
     } else {
       let error = response.error;
       let message = error ? error.message : "Wrong login or password";

@@ -52,16 +52,16 @@ class App extends React.Component {
 
   handleLogOut = () => {
     const { cookies } = this.props;
-    cookies.remove('login', null);
-    cookies.remove('password', null);
-    cookies.remove('token', null);
-    cookies.remove('isAdmin', null);
     this.setState({
       login: '',
       password: '',
       token: '',
       isAdmin: false,
     });
+    cookies.remove('login', null);
+    cookies.remove('password', null);
+    cookies.remove('token', null);
+    cookies.remove('isAdmin', null);
   }
 
   render() {
