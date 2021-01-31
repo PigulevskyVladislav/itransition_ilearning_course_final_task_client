@@ -9,11 +9,16 @@ class ItemAddPage extends React.Component {
     this.state = {
       collectionId: null,
       name: '',
-      numbers: [],
-      strings: [],
-      texts: [],
-      dates: [],
-      bools: [], 
+      numbersName: [],
+      numbersValue: [],
+      stringsName: [],
+      stringsValue: [],
+      textsName: [],
+      textsValue: [],
+      datesName: [],
+      datesValue: [],
+      boolsValue: [], 
+      boolsName: [], 
       error: null,
       formErrors: {name: ''},
       nameValid: false,
@@ -25,7 +30,6 @@ class ItemAddPage extends React.Component {
 
   componentDidMount() {
     let id = this.props.match.params.collection_id;
-    console.log(id);
     this.setState({ collectionId: id });
     fetchData(getAddress().concat("/collections/extrafieldname/".concat(id)), this.getItem);
   }
@@ -33,11 +37,11 @@ class ItemAddPage extends React.Component {
   getItem = (response) => {
     let result = response.result;
     if (result) {
-      this.fillExtraFieldName(result.numbers, 'numbers');
-      this.fillExtraFieldName(result.strings, 'strings');
-      this.fillExtraFieldName(result.texts, 'texts');
-      this.fillExtraFieldName(result.dates, 'dates');
-      this.fillExtraFieldName(result.bools, 'bools');
+      this.fillExtraFieldName(result.numbers, 'numbersName');
+      this.fillExtraFieldName(result.strings, 'stringsName');
+      this.fillExtraFieldName(result.texts, 'textsName');
+      this.fillExtraFieldName(result.dates, 'datesName');
+      this.fillExtraFieldName(result.bools, 'boolsName');
       this.setState({
         isLoaded: true,
       });
@@ -55,13 +59,24 @@ class ItemAddPage extends React.Component {
   }
 
   handleSubmit = (event) => {
-       
+
     event.preventDefault();
+  }
+
+  handleExtraFieldChange = (event) => {
+    let inputData = event.target.getAttribute('input-data');
+    let fields = this.state[inputData];
+    let isCheckbox = event.target.type === 'checkbox';
+    let value = isCheckbox ? event.target.checked : event.target.value;
+    let index = event.target.id;
+    fields[index] = value;
+    this.setState({ [inputData]: fields });
+    console.log(this.state[inputData]);
   }
 
   handleUserInput = (event) => {
     const name = event.target.name;
-    const value = event.target.value;
+    const value = event.target.value;    
     this.setState({[name]: value}, 
                   () => { this.validateField(name, value) });
   }
@@ -89,27 +104,13 @@ class ItemAddPage extends React.Component {
       this.setState({formValid: this.state.nameValid});
   }
 
-  renderNumbers = () => {
-    let numbers = this.state.numbers;
-    if (numbers) {
-      let itemFields = numbers.map((field, index) => 
-        <div key={index} className="form-group">
-          <label>{field}:</label>
-          <input type="number" name={field} className="form-control" />
-        </div>
-      );
-      return itemFields;
-    }
-    return null;
-  }
-
-  renderDates = () => {
-    let numbers = this.state.numbers;
-    if (numbers) {
-      let itemFields = numbers.map((field, index) => 
-        <div key={index} className="form-group">
-          <label>{field}:</label>
-          <input type="number" name={field} className="form-control" />
+  renderFields = (fields, type) => {
+    let fieldsName = this.state[fields.concat('Name')];
+    if (fieldsName) {
+      let itemFields = fieldsName.map((field, index) => 
+        <div key={"key_div_"+fields+"_"+index} className="form-group">
+          <label name={"label_"+fields+"_"+index} >{field}:</label>
+          <input name={"input_"+fields+"_"+index} input-data={fields+"Value"} id={index} type={type} className="form-control" onChange={this.handleExtraFieldChange.bind(this)}/>
         </div>
       );
       return itemFields;
@@ -118,12 +119,12 @@ class ItemAddPage extends React.Component {
   }
 
   renderBools = () => {
-    let bools = this.state.bools;
+    let bools = this.state.boolsName;
     if (bools) {
       let itemFields = bools.map((field, index) => 
-        <div key={index} className="form-group">
-          <input type="checkbox" name={field}  />
-          <label className="form-check-label ml-2">{field}</label>
+        <div key={"key_div_bools_"+index} className="form-group">
+          <input name={"input_bools_"+index} input-data="boolsValue" id={index} type="checkbox" onChange={this.handleExtraFieldChange.bind(this)} />
+          <label name={"label_bools_"+index} className="form-check-label ml-2">{field}</label>
         </div>
       );
       console.log(itemFields);
@@ -146,8 +147,10 @@ class ItemAddPage extends React.Component {
             <label>Name:</label>
             <input type="text" name="name" value={this.state.name} className="form-control" onChange={this.handleUserInput.bind(this)} />
           </div>
-          {this.renderNumbers()}
-          {this.renderDates()}
+          {this.renderFields('numbers', 'number')}
+          {this.renderFields('strings', 'text')}
+          {this.renderFields('texts', 'text')}
+          {this.renderFields('dates', 'date')}
           {this.renderBools()}
           <br />
           <input type="submit" className="btn btn-primary" value="Create collection" disabled={!this.state.formValid}/>
