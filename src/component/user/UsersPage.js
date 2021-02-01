@@ -37,8 +37,7 @@ class UsersPage extends React.Component {
     } else 
     return(
       <div className="container page-begin">
-        <Users users={users}
-               isLoaded={isLoaded} />
+        <Users users={users} />
       </div>
     );
   }
