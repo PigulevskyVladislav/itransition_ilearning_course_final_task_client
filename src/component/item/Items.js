@@ -12,7 +12,10 @@ class Items extends React.Component {
   }
 
   componentDidMount() {
-    let id = this.props.id || this.props.match.params.id;
+    let id = this.props.id ? this.props.id : null;
+    if (!id) {
+      id = this.props.match ? this.props.match.params.id : null;
+    }
     let source = getAddress().concat("/items");
     if (id) {
       let selector = this.props.selector || this.props.match.params.selector;

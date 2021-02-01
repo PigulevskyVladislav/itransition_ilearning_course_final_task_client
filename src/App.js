@@ -8,14 +8,14 @@ import { instanceOf } from 'prop-types';
 import { withCookies, Cookies } from 'react-cookie';
 import Home from "./component/home/Home";
 import Item from "./component/item/Item"
-import Items from "./component/item/Items"
+import ItemsPage from "./component/item/ItemsPage"
 import ItemAddPage from "./component/item/ItemAddPage"
-import Users from "./component/Users"
+import UsersPage from "./component/user/UsersPage"
 import Login from "./component/Login";
 import Header from "./component/Header";
 import Register from "./component/Register";
 import Collection from "./component/collection/Collection";
-import Collections from "./component/collection/Collections";
+import CollectionsPage from "./component/collection/CollectionsPage";
 import CollectionAddPage from "./component/collection/CollectionAddPage";
 import UserCollectionsPage from "./component/collection/UserCollectionsPage";
 import "./css/default.css";
@@ -76,18 +76,18 @@ class App extends React.Component {
               <Switch>
                 <Route path="/home" component={Home}/>
                 <Route path="/items/add/:collection_id" component={ItemAddPage}/>
-                <Route path="/items/:selector/:id" component={Items} />
+                <Route path="/items/:selector/:id" component={ItemsPage} />
                 <Route path="/items/:item_id" component={Item} />
-                <Route path="/items" component={Items} />
+                <Route path="/items" component={ItemsPage} />
                 <Route path="/collections/byuser/" component={UserCollectionsPage} />
                 <Route path="/collections/add/" component={CollectionAddPage} />
                 <Route path="/collections/:collection_id" component={Collection} />
-                <Route path="/collections" component={Collections} />
+                <Route path="/collections" component={CollectionsPage} />
                 <Route path="/login">
                   <Login updateUser={this.handleUpdateUser} />
                 </Route>
                 <Route path="/register" component={Register}/>
-                <Route path="/users" component={Users}/>
+                <Route path="/users" component={UsersPage}/>
               </Switch>
             </div>
         </Router>

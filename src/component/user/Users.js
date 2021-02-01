@@ -1,35 +1,8 @@
 import React from "react";
-import { fetchData, getAddress } from "../utils"
 
 class Users extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      users: [],
-      isLoaded: false,
-    };
-  }
-
-  componentDidMount() {
-    fetchData(getAddress().concat("/users"), this.getUsers);
-  }
-
-  getUsers = (response) => {
-    let result = response.result;
-    if (result) {
-      this.setState({
-        users: Array.from(result),
-        isLoaded: true,
-      });
-    } else {
-      this.setState({
-        error: { message: "Collection loading error" },
-      });
-    }
-  }
-
   renderItems = () => {
-    let items = this.state.users;
+    let items = this.props.users;
     let itemRows = items.map((item) => 
     <tr key={item.id}>
       <td>{item.login}</td>
@@ -41,11 +14,6 @@ class Users extends React.Component {
   }
 
   render() {
-    let rows;
-    if (this.state.isLoaded) {
-      rows = this.renderItems();
-    }
-
     return(
       <div className="container">
         <h1>Users</h1>
@@ -58,7 +26,7 @@ class Users extends React.Component {
             </tr>
           </thead>
           <tbody>
-            {rows}
+            {this.renderItems()}
           </tbody>
         </table>
       </div>
