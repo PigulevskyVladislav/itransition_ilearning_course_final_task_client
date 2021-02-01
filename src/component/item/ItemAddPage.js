@@ -115,7 +115,7 @@ class ItemAddPage extends React.Component {
         this.getExtaraFieldArray(datesName, datesValue, null));
       extraField = extraField.concat(
         this.getExtaraFieldArray(boolsName, boolsValue, false));
-      newItem.extra_field = extraField + "";
+      newItem.extra_field = JSON.stringify(extraField);
     }
     result.item = newItem;
     let tagIds = [];
