@@ -1,37 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { fetchData, getAddress } from "../../../utils"
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 class BiggestCollectionTable extends React.Component {
-  constructor(props){
-    super(props);
-    this.state = {
-      collections: [],
-      isLoaded: false,
-    };
-  }
-
-  componentDidMount() {
-    fetchData(getAddress().concat("/collections/biggest"), this.getCollections);
-  }
-
-  getCollections = (response) => {
-    let result = response.result;
-    if (result) {
-      this.setState({
-        collections: Array.from(result),
-        isLoaded: true,
-      });
-    } else {
-      this.setState({
-        error: { message: "Collection loading error" },
-      });
-    } 
-  }
-
   renderItems = () => {
-    let items = this.state.collections;
+    let items = this.props.collections;
     let itemRows = items.map((item) => 
     <tr key={item.id}>
       <td><Link className="nav-link" to={"/collections/".concat(item.id)}>{item.name}</Link></td>
@@ -43,12 +15,7 @@ class BiggestCollectionTable extends React.Component {
   }
 
   render() {
-    let rows;
-    if (this.state.isLoaded) {
-      rows = this.renderItems();
-    }
-
-    return(
+     return(
       <table className="table">
         <thead>
           <tr>
@@ -58,7 +25,7 @@ class BiggestCollectionTable extends React.Component {
           </tr>
         </thead>
         <tbody>
-          {rows}
+          {this.renderItems()}
         </tbody>
       </table>
     );

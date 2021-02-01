@@ -21,8 +21,10 @@ class Collection extends React.Component {
       ownerId: '',
       owner: '',
       image: '',
+      items: [],
       canModify: false,
-      isLoaded: false,
+      isItemsLoaded: false,
+      isCoollectionLoaded: false,
       error: null,
     };
   }
@@ -30,6 +32,7 @@ class Collection extends React.Component {
   componentDidMount() {
     let id = this.props.match.params.collection_id;
     fetchData(getAddress().concat("/collections/".concat(id)), this.getCollection);
+    fetchData(getAddress().concat("/items/").concat("bycollection/").concat(id), this.getItems);
   }
 
   getCollection = (response) => {
@@ -42,12 +45,26 @@ class Collection extends React.Component {
         ownerId: result.owner_id,
         owner: result.owner,
         image: result.image,
-        isLoaded: true,
+        isCoollectionLoaded: true,
       });
       this.checkCanModify();
     } else {
       this.setState({
         error: { message: "Collection loading error" },
+      });
+    }
+  }
+
+  getItems = (response) => {
+    let result = response.result;
+    if (result) {
+      this.setState({
+        items: Array.from(result),
+        isItemsLoaded: true,
+      });
+    } else {
+      this.setState({
+        error: { message: "Items loading error" },
       });
     }
   }
@@ -66,10 +83,10 @@ class Collection extends React.Component {
   }
 
   render() {
-    const { id, error, isLoaded } = this.state;
+    const { id, items, error, isCoollectionLoaded, isItemsLoaded } = this.state;
     if (error) {
       return errorPage(error); 
-    } else if (!isLoaded) {
+    } else if (!(isCoollectionLoaded && isItemsLoaded)) {
       return loading();
     } else 
     return(
@@ -87,7 +104,7 @@ class Collection extends React.Component {
           </div>
         </div>
         <div className="row">
-          <Items id={this.state.id} selector={"bycollection"}/>
+          <Items items={items} selector={"bycollection"}/>
         </div>
       </div>
     );

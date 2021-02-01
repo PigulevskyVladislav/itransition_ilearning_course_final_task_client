@@ -1,38 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { fetchData, getAddress } from "../../../utils"
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 class LastItemTable extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      items: [],
-      isLoaded: false,
-      error: null,
-    };
-  }
-
-  componentDidMount() {
-    fetchData(getAddress().concat("/items/lastadded"), this.getItems);
-  }
-
-  getItems = (response) => {
-    let result = response.result;
-    if (result) {
-      this.setState({
-        items: Array.from(result),
-        isLoaded: true,
-      });
-    } else {
-      this.setState({
-        error: response.error,
-      });
-    }
-  }
-
   renderItems = () => {
-    let items = this.state.items;
+    let items = this.props.items;
     let itemRows = items.map((item) => 
     <tr key={item.id}>
       <td><Link className="nav-link" to={"/items/".concat(item.id)}>{item.name}</Link></td>
@@ -43,11 +14,6 @@ class LastItemTable extends React.Component {
   }
 
   render() {
-    let rows;
-    if (this.state.isLoaded) {
-      rows = this.renderItems();
-    }
-
     return(
       <table className="table">
         <thead>
@@ -57,7 +23,7 @@ class LastItemTable extends React.Component {
           </tr>
         </thead>
         <tbody>
-          {rows}
+          {this.renderItems()}
         </tbody>
       </table>
     );
