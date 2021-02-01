@@ -29,7 +29,6 @@ class Collections extends React.Component {
             {this.renderItems()}
           </tbody>
         </table>
-        {this.props.token && <Link className="btn btn-success mt-5" to={"/collections/add/"}>Create new collection</Link>}
       </div>
     );
   }

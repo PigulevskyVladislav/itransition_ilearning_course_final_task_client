@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { instanceOf } from 'prop-types';
 import { withCookies, Cookies } from 'react-cookie';
 import Collections from "./Collections";
@@ -49,6 +50,7 @@ class UserCollectionsPage extends React.Component {
     return(
       <div className="container page-begin">
         <Collections collections={collections} />
+        <Link className="btn btn-success mt-5" to={"/collections/add/"}>Create new collection</Link>
       </div>
     )
   }
