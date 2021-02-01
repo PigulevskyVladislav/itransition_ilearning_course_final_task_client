@@ -69,13 +69,15 @@ class App extends React.Component {
       <div className="h-100 d-flex flex-column">
         <Router>
           <div>
-              <Header login={this.state.login}
+              <Header isAdmin={this.state.isAdmin}
+                      login={this.state.login}
                       logOut={this.handleLogOut} />
             </div>
             <div className="h-100 d-flex flex-column">
               <Switch>
                 <Route path="/home" component={Home}/>
                 <Route path="/items/add/:collection_id" component={ItemAddPage}/>
+                <Route path="/items/search/:query" component={ItemsPage}/>
                 <Route path="/items/:selector/:id" component={ItemsPage} />
                 <Route path="/items/:item_id" component={Item} />
                 <Route path="/items" component={ItemsPage} />

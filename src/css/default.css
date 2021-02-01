@@ -28,6 +28,10 @@
   margin: 0 auto;
 }
 
+.search{
+  min-width: 40vh;
+}
+
 .close{
   right:0px;
 }

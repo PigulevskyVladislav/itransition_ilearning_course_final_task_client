@@ -2,12 +2,24 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { instanceOf } from 'prop-types';
 import { withCookies, Cookies } from 'react-cookie';
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 class Header extends React.Component {
   static propTypes = {
     cookies: instanceOf(Cookies).isRequired
   };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      query: '',
+    }
+  }
+
+  handleOnSearchChange = (event) => {
+    this.setState({
+      query: event.target.value
+    });
+  }
 
   handleShowLogin() {
     if(this.props.login) {
@@ -41,9 +53,10 @@ class Header extends React.Component {
               <li className="nav-item">
                 <Link className="nav-link" to="/collections">Collections</Link>
               </li>
+              {this.props.isAdmin &&
               <li className="nav-item">
                 <Link className="nav-link" to="/users">Users</Link>
-              </li>
+              </li>}
             </ul>
           </div>
           {this.handleShowLogin()}
@@ -54,6 +67,14 @@ class Header extends React.Component {
                                       onClick={this.props.login ? this.props.logOut : null}>
                 {this.props.login ?'Logout':'Login'}
               </a>
+            </li>
+            <li className="nav-item">
+              <div className="input-group d-flex flex-row search">
+                <input type="search" className="form-control rounded" placeholder="Search items"
+                  aria-describedby="search-addon" onChange={this.handleOnSearchChange.bind(this)}
+                  value={this.state.query} />
+                <Link className="btn btn-outline-primary ml-1" to={"/items/search/".concat(this.state.query)}>Search</Link>
+              </div>
             </li>
           </ul>
         </div>

@@ -16,11 +16,21 @@ class ItemsPage extends React.Component {
     let source = getAddress().concat("/items");
     let id = this.props.match.params.id;
     let selector = this.props.match.params.selector;
+    let query = this.props.match.params.query;
     if (id && selector) {
       source += "/".concat(selector).concat("/").concat(id);
     }
+    if (query) {
+      source += "/search/".concat(query);
+    }
     fetchData(source, this.getItems);
   }
+
+  componentDidUpdate(prevProps) {
+    if(!(this.props == prevProps)) {
+      window.location.reload();
+    }
+  } 
 
   getItems = (response) => {
     let result = response.result;
