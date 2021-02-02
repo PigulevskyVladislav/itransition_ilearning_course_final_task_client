@@ -37,7 +37,6 @@ class Item extends React.Component {
         haveExtraField: extra_field ? true : false,
         isLoaded: true,
       });
-      console.log(this.state.extraField);
     } else {
       this.setState({
         error: { message: "Item loading error" },
